@@ -41,7 +41,9 @@ You need to print a integer representing the minimum steps.
 The minimum steps they should take: 5->7->10->12. Thus the answer is 3.
 
 解题思路:
-将x到y的四种变换看成是x到y的四条路径, 直接BFS 配合优先级队列即可.
+将x到y的四种变换看成是x到y的四条路径, 直接BFS 配合优先级队列即可, 步数小的优先.
+为了简化代码, 这里使用了函数指针数组.
+
 */
 
 #include<iostream>
@@ -71,6 +73,14 @@ int F(int x)
     return cnt;
 }
 
+int f1(int x){return x+1; }
+int f2(int x){return x-1; }
+int f3(int x){return x+F(x); }
+int f4(int x){return x-F(x); }
+
+//函数指针数组
+int (*func[4])(int x) = {f1,f2,f3,f4};
+
 priority_queue<Node> Q;
 
 int BFS(int A, int B)
@@ -82,37 +92,15 @@ int BFS(int A, int B)
     {
         
         Node p = Q.top(); Q.pop();
-        if(p.type +1 == B) return p.step+1;
-        if(!vis[p.type + 1])
+        for(int i=0; i<4; ++i)
         {
-            vis[p.type +1] = 1;
-            Q.push(Node(p.type+1, p.step+1));
-        }
-
-        if(p.type - 1 == B) return p.step+1;
-        if(!vis[p.type-1])
-        {
-            vis[p.type-1] = 1;
-            Q.push(Node(p.type-1, p.step+1));
-        }
-
-
-        int tmp = F(p.type);
-        int type = p.type + tmp;
-        if( type == B) return p.step+1;
-        
-        if(!vis[type])
-        {
-            vis[type] = 1;
-            Q.push(Node(type, p.step+1));
-        }
-
-        type = p.type - tmp;
-        if(type == B) return p.step + 1;
-        if(!vis[type])
-        {
-            vis[type] = 1;
-            Q.push(Node(type, p.step+1));
+            int type = func[i](p.type);
+            if(type  == B) return p.step + 1;
+            if(!vis[type])
+            {
+                vis[type] = 1;
+                Q.push(Node(type, p.step +1));
+            }
         }
     }
     return 0;
@@ -120,10 +108,12 @@ int BFS(int A, int B)
 
 int main()
 {
+    #ifdef WFX
+    freopen("in.txt","r",stdin);
+    #endif
     int A,B;
     scanf("%d%d",&A,&B);
     printf("%d\n", BFS(A,B));
-
 
     return 0;
 }
