@@ -8,3 +8,7 @@
 *.exe
 
 others/
+
+.vscode/
+
+test.cpp
