@@ -43,6 +43,7 @@ int dp(int n){
 	d[1]=1;
 	int Max=1; 
 	for(int i=2; i<=n; ++i){
+		//查找f[1]到f[i-1]中满足a[j]<a[i]的最大的f[j]
 		int tmp = 0;
 		for(int j=i-1;j>=1; --j){
 			if(a[j] <= a[i] &&  tmp<d[j]) tmp = d[j];
